@@ -1,0 +1,117 @@
+# ====================================================================
+# React Native / Node / JavaScript / Expo
+# ====================================================================
+node_modules/
+.npm/
+.eslintcache
+.stylelintcache
+.prettiercache
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+bun.lockb
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# React Native Android native builds
+android/app/build/
+android/.gradle/
+android/local.properties
+android/key.properties
+*.apk
+*.aar
+*.apks
+*.aab
+
+# React Native iOS native builds
+ios/Pods/
+ios/build/
+ios/DerivedData/
+ios/*.xcworkspace/
+.xcode.env.local
+
+# Metro bundler cache
+.metro/
+
+# ====================================================================
+# ASP.NET Core / .NET / C#
+# ====================================================================
+# Build outputs
+[Bb]in/
+[Oo]bj/
+
+# CoreCLR dumps
+*.dmp
+*.mdmp
+
+# User-specific project settings
+*.user
+*.userosscache
+*.sln.docstates
+
+# .NET Core local secrets & app config overrides
+appsettings.Development.json
+appsettings.local.json
+_backup/
+
+# EF Core migrations / data caches
+.sqlite
+*.db
+*.db-shm
+*.db-wal
+
+# Publish outputs
+publish/
+out/
+
+# ====================================================================
+# JetBrains Rider / IntelliJ IDE
+# ====================================================================
+.idea/
+*.sln.iml
+
+# Rider specific metadata tracking files
+*.suo
+*.ntvs*
+*.njsproj
+*.sln.targets
+
+# ====================================================================
+# Visual Studio Code (VS Code)
+# ====================================================================
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.history/
+*.code-workspace
+
+# ====================================================================
+# Environment & Secrets (Crucial for JWT and APIs)
+# ====================================================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+*.key
+*.pfx
+
+# ====================================================================
+# Operating System Files
+# ====================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
