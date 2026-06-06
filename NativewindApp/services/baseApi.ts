@@ -3,7 +3,8 @@ import { getJWTToken, removeJWTToken } from '../utils/tokenStorage';
 import { logoutUser } from '@/slices/authSlice';
 
 const rawBaseQuery = fetchBaseQuery({
-    baseUrl: "https://p32-native.itstep.click/api",
+    // baseUrl: "http://192.168.0.133:4384/api/",
+    baseUrl: "http://192.168.0.143:5207/api/",
     prepareHeaders: async (headers) => {
         const token = await getJWTToken();
 

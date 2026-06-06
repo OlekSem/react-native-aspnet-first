@@ -20,7 +20,24 @@ export const authApi = baseApi.injectEndpoints({
                 }
             }
         }),
+        register: build.mutation({
+            query: (credentials) => ({
+                url: "/Account/Register",
+                method: "POST",
+                body: credentials
+            }),
+            async onQueryStarted(arg, {queryFulfilled}) {
+                try {
+                    const data = await queryFulfilled;
+                    if(data?.token) {
+                        await saveJWTToken(data.token);
+                    }
+                } catch(error) {
+                    console.log(error.error);
+                }
+            }
+        })
     })
 })
 
-export const {useLoginMutation} = authApi;
+export const {useLoginMutation, useRegisterMutation} = authApi;

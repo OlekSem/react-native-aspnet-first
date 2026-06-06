@@ -5,6 +5,7 @@ using back.Constants;
 using back.Data;
 using back.Entities.Identity;
 using back.Interfaces;
+using back.Mappers;
 using back.Models.Seeder;
 
 namespace back.Seeder;
@@ -18,6 +19,7 @@ public static class DbSeeder
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<RoleEntity>>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserEntity>>();
+        var userMapper = scope.ServiceProvider.GetRequiredService<UserMapper>();
 
         context.Database.Migrate();
 
@@ -45,13 +47,9 @@ public static class DbSeeder
                     foreach (var user in users)
                     {
                         //var entity = mapper.Map<UserEntity>(user);
-                        var entity = new UserEntity
-                        {
-                            Email = user.Email,
-                            UserName = user.Email,
-                            FirstName = user.FirstName,
-                            LastName = user.LastName
-                        };
+
+                        var entity = userMapper.UserSeedToUser(user);
+                        
                         entity.Image = await imageService.SaveImageFromUrlAsync(user.ImagePath);
                         var result = await userManager.CreateAsync(entity, user.Password);
                         if (!result.Succeeded)

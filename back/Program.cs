@@ -7,6 +7,7 @@ using System.Text;
 using back.Data;
 using back.Entities.Identity;
 using back.Interfaces;
+using back.Mappers;
 using back.Seeder;
 using back.Services;
 
@@ -17,9 +18,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
+builder.Services.AddSingleton<UserMapper>();
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowMobileApps", policy =>
+    {
+        policy.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 builder.Services
     .AddIdentity<UserEntity, RoleEntity>(options =>
@@ -62,6 +75,8 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+app.UseCors("AllowMobileApps");
+
 // Configure the HTTP request pipeline.
 
 app.MapOpenApi();
@@ -83,6 +98,7 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = $"/{dir}"
 });
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

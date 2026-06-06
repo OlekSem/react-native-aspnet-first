@@ -1,7 +1,10 @@
+using back.Constants;
 using back.Data;
 using back.Entities.Identity;
 using back.Interfaces;
+using back.Mappers;
 using back.Models.Account;
+using back.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,8 +15,10 @@ namespace back.Controllers;
 public class AccountController(
     IJwtTokenService jwtTokenService,
     UserManager<UserEntity> userManager, // Corrected from AppDbContext
-    SignInManager<UserEntity> signInManager // Added to handle password checks
-) : ControllerBase
+    SignInManager<UserEntity> signInManager, // Added to handle password checks
+    UserMapper userMapper,
+    IImageService imageService
+    ) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
@@ -33,6 +38,34 @@ public class AccountController(
         }
 
         var token = await jwtTokenService.CreateTokenAsync(user);
-        return Ok(new { Token = token });
+        return Ok(token);
+    }
+
+    [HttpPost]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> Register([FromForm] RegisterModel model)
+    {
+        var user = await userManager.FindByEmailAsync(model.Email);
+
+        if (user != null)
+        {
+            return BadRequest("Email is already in use");
+        }
+
+        user = userMapper.RegisterUserToUser(model);
+
+        if (model.Image != null)
+        {
+            user.Image = await imageService.SaveImageAsync(model.Image);
+        }
+
+        var result = await userManager.CreateAsync(user, model.Password);
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(user, Roles.User);
+            var token = await jwtTokenService.CreateTokenAsync(user);
+            return Ok(new { token });
+        }
+        return BadRequest(result.Errors);
     }
 }

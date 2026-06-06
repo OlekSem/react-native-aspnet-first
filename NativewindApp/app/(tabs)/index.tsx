@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import {Platform, StyleSheet, Text} from 'react-native';
+import {Platform, StyleSheet, Text, Pressable} from 'react-native';
 
 import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
@@ -8,9 +8,11 @@ import { ThemedView } from '@/components/themed-view';
 import {Link, Redirect} from 'expo-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
+import { logoutUser } from '@/slices/authSlice';
 
 export default function HomeScreen() {
   const {isAuthenticated} = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
 
   if(!isAuthenticated)
   {
@@ -85,6 +87,13 @@ export default function HomeScreen() {
           <ThemedText type="defaultSemiBold">app-example</ThemedText>.
         </ThemedText>
       </ThemedView>
+      <Pressable 
+        onPress={() => dispatch(logoutUser())}
+        className="mt-6 w-full bg-red-500 rounded-lg py-3 items-center active:bg-red-600"
+      >
+        <Text className="text-white font-semibold text-base">Вийти з акаунту</Text>
+      </Pressable>
+      
     </ParallaxScrollView>
   );
 }
