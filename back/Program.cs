@@ -10,6 +10,7 @@ using back.Interfaces;
 using back.Mappers;
 using back.Seeder;
 using back.Services;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,7 +68,38 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
+    {
+        document.Components ??= new OpenApiComponents();
+        document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
+
+        document.Components.SecuritySchemes["Bearer"] = new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Name = "Authorization",
+            Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\""
+        };
+
+        document.Security = [
+            new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecuritySchemeReference("Bearer"),
+                    []
+                }
+            }
+        ];
+
+        document.SetReferenceHostDocument();
+
+        return Task.CompletedTask;
+    });
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -80,11 +112,10 @@ app.UseCors("AllowMobileApps");
 // Configure the HTTP request pipeline.
 
 app.MapOpenApi();
-
 app.UseSwaggerUI(options =>
 {
     options.RoutePrefix = "swagger";
-    options.SwaggerEndpoint("/openapi/v1.json", "JustDoIt API v1");
+    options.SwaggerEndpoint("/openapi/v1.json", "Default API v1");
     options.OAuthUsePkce();
 });
 

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using back.Constants;
 using back.Data;
 using back.Entities.Identity;
@@ -5,6 +6,7 @@ using back.Interfaces;
 using back.Mappers;
 using back.Models.Account;
 using back.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -67,5 +69,24 @@ public class AccountController(
             return Ok(new { token });
         }
         return BadRequest(result.Errors);
+    }
+
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> Me()
+    {
+        var email = User.Claims.First(c => c.Type == ClaimTypes.Email).Value;
+        if (email == null)
+        {
+            return Unauthorized();
+        }
+        var user = await userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        var profile = userMapper.UserEntityToProfileModel(user);
+        return Ok(profile);
     }
 }

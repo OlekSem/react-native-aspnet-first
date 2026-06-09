@@ -13,4 +13,6 @@ public partial class UserMapper
 
     [MapProperty(nameof(UserSeederModel.Email), nameof(UserEntity.UserName))]
     public partial UserEntity RegisterUserToUser(RegisterModel model);
+    
+    public partial ProfileModel UserEntityToProfileModel(UserEntity user);
 }
