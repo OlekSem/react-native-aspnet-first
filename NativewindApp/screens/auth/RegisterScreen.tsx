@@ -4,7 +4,6 @@ import { ImagePickerAsset, launchImageLibraryAsync } from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { useDispatch } from "react-redux";
 import { useRegisterMutation } from "@/services/authApi";
-import { setAuthenticated } from "@/slices/authSlice";
 
 type RegisterFormData = {
     firstName: string;

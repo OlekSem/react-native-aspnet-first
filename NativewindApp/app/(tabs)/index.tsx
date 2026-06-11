@@ -6,18 +6,17 @@ import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import {Link, Redirect} from 'expo-router';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../store';
-import { logoutUser } from '@/slices/authSlice';
+import { useLogout } from '@/hooks/useLogout';
+import { useCheckAuth } from '@/hooks/useCheckAuth';
 
 export default function HomeScreen() {
-  const {isAuthenticated} = useSelector((state: RootState) => state.auth);
-  const dispatch = useDispatch();
+  const { isLoggedIn, isLoading: isStorageLoading } = useCheckAuth();
 
-  if(!isAuthenticated)
-  {
-    return <Redirect href='/login' />;
+  if (!isStorageLoading && !isLoggedIn) {
+    return <Redirect href={'/(auth)/login'}/>
   }
+
+  const logout = useLogout();
 
   return (
     <ParallaxScrollView
@@ -88,7 +87,7 @@ export default function HomeScreen() {
         </ThemedText>
       </ThemedView>
       <Pressable 
-        onPress={() => dispatch(logoutUser())}
+        onPress={() => logout()}
         className="mt-6 w-full bg-red-500 rounded-lg py-3 items-center active:bg-red-600"
       >
         <Text className="text-white font-semibold text-base">Вийти з акаунту</Text>

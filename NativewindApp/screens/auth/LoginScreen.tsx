@@ -3,7 +3,6 @@ import { useForm, Controller } from "react-hook-form";
 import {useRouter} from "expo-router";
 import { useLoginMutation } from "@/services/authApi";
 import { useDispatch } from "react-redux";
-import { setAuthenticated } from "@/slices/authSlice";
 
 type LoginFormData = {
     email: string;
@@ -21,7 +20,6 @@ export default function LoginScreen() {
         console.log("Form data:", data);
         try {
             await login(data).unwrap();
-            dispatch(setAuthenticated(true));
             router.push("/explore"); 
         } catch (err) {
             console.error('Failed to log in:', err);
