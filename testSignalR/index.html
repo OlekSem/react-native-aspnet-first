@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>SignalR Scenario A Tester</title>
+	<style>
+        body { font-family: sans-serif; padding: 20px; background: #f0f0f0; }
+        #chatBox { background: white; max-width: 500px; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        #messagesList { list-style: none; padding: 0; max-height: 250px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; background: #fafafa; }
+        .input-group { margin-bottom: 10px; }
+        label { display: inline-block; width: 80px; font-weight: bold; }
+        input[type="text"] { padding: 6px; width: 250px; }
+        button { padding: 6px 15px; background: #0066cc; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:disabled { background: #ccc; }
+	</style>
+</head>
+<body>
+
+<div id="chatBox">
+	<h3>SignalR Scenario A Test Window</h3>
+
+	<div class="input-group">
+		<label>Username:</label>
+		<input type="text" id="userInput" value="WebTester" />
+	</div>
+
+	<ul id="messagesList"></ul>
+
+	<div class="input-group">
+		<label>Message:</label>
+		<input type="text" id="messageInput" placeholder="Type a message..." />
+		<button id="sendButton" disabled>Send</button>
+	</div>
+</div>
+
+<!-- Official SignalR JavaScript Client -->
+<script src="
+https://cdn.jsdelivr.net/npm/@microsoft/signalr@10.0.0/dist/browser/signalr.min.js
+"></script>
+<script>
+	// 🔗 Target your exact hub url
+	const connection = new signalR.HubConnectionBuilder()
+		.withUrl("http://192.168.0.143:5207/chathub")
+		.build();
+
+	const sendBtn = document.getElementById("sendButton");
+	const msgInput = document.getElementById("messageInput");
+	const userInput = document.getElementById("userInput");
+	const msgList = document.getElementById("messagesList");
+
+	// 📥 1. Receive: Listens for a single payload object from C# ("Send")
+	connection.on("Send", function (messageObj) {
+		const li = document.createElement("li");
+
+		// Extract Username and Text from the broadcasted C# ChatMessage model
+		li.textContent = `${messageObj.username}: ${messageObj.text}`;
+
+		msgList.appendChild(li);
+		msgList.scrollTop = msgList.scrollHeight; // Auto scroll down
+	});
+
+	// ⚡ 2. Start Lifecycle
+	connection.start()
+		.then(() => {
+			sendBtn.disabled = false;
+			console.log("Connected to Scenario A Hub!");
+		})
+		.catch(err => console.error("Connection error:", err));
+
+	// 📤 3. Send: Transmits a single dictionary object structure matching your C# class
+	sendBtn.addEventListener("click", function () {
+		const textValue = msgInput.value.trim();
+		const userValue = userInput.value.trim();
+
+		if (!textValue) return;
+
+		// The object keys ('username' and 'text') match your C# class properties
+		connection.invoke("Send", {
+			username: userValue,
+			text: textValue
+		})
+			.then(() => {
+				msgInput.value = ""; // Clear input box
+			})
+			.catch(err => console.error("Send failed:", err));
+	});
+</script>
+
+</body>
+</html>

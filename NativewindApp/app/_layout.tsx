@@ -12,6 +12,7 @@ import {Pressable, View, Text} from 'react-native';
 
 import NetworkLogger from 'react-native-network-logger';
 import { useState } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 // export const unstable_settings = {
 //     anchor: '(tabs)',
@@ -24,7 +25,7 @@ export default function RootLayout() {
     const [showLogger, setShowLogger] = useState(false);
 
     return (
-        <>
+        <SafeAreaProvider>
             <Provider store={store}>
                 <View className='flex-1'>
                     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -59,6 +60,6 @@ export default function RootLayout() {
                     )}
                 </View>
             </Provider>
-        </>
+        </SafeAreaProvider>
     );
 }

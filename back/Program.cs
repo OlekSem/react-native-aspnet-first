@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using back.Data;
 using back.Entities.Identity;
+using back.Hubs;
 using back.Interfaces;
 using back.Mappers;
 using back.Seeder;
@@ -19,6 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
+builder.Services.AddSignalR();
 builder.Services.AddSingleton<UserMapper>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -29,9 +31,11 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowMobileApps", policy =>
     {
-        policy.AllowAnyOrigin()
+        // Removed .AllowAnyOrigin() because it explicitly breaks .AllowCredentials()
+        policy.SetIsOriginAllowed(origin => true) // Safely allows any specific origin dynamically with credentials
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials(); // Crucial for SignalR handshakes
     });
 });
 
@@ -133,6 +137,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<ChatHub>("/chathub");
 
 await app.SeedData();
 
