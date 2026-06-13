@@ -3,7 +3,8 @@ import { getJWTToken, removeJWTToken } from '../utils/tokenStorage';
 import { DeviceEventEmitter } from 'react-native';
 
 const rawBaseQuery = fetchBaseQuery({
-    baseUrl: "http://192.168.0.143:5207/api/",
+    // baseUrl: "http://192.168.0.143:5207/api/",
+    baseUrl: process.env.EXPO_PUBLIC_API_URL + "api/",
     prepareHeaders: async (headers) => {
         const token = await getJWTToken();
         if (token) {

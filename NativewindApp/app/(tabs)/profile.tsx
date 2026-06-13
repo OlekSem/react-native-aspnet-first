@@ -26,7 +26,7 @@ export default function profile() {
         {/* Profile Image */}
         {user.image && <View className="relative mb-6">
           <Image 
-            source={{ uri: `http://192.168.0.143:5207/images/400_${user.image}` }} 
+            source={{ uri: `${process.env.EXPO_PUBLIC_API_URL}/images/400_${user.image}` }} 
             className="w-28 h-28 rounded-full border-4 border-zinc-50 dark:border-zinc-800 shadow-inner"
           />
           <View className="absolute bottom-1 right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-white dark:border-zinc-900" />

@@ -13,8 +13,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HubConnectionBuilder, HubConnection, LogLevel } from "@microsoft/signalr";
 import { useMeQuery } from "@/services/authApi";
+import { Redirect } from "expo-router";
 
-const HUB_URL ='http://192.168.0.143:5207/chathub';
+const HUB_URL = process.env.EXPO_PUBLIC_API_URL + "chathub"
+// 'http://192.168.0.143:5207/chathub';
 // const HUB_URL ='https://p32-native.itstep.click/chat';
 
 interface Message {
@@ -33,6 +35,16 @@ export default function Chat() {
 
   const { data: user, error, refetch } = useMeQuery();
 
+  if(user == null) {
+    return <SafeAreaView>
+        <Text className="mx-auto">
+           could not fetch user
+        </Text>
+    </SafeAreaView>
+  }
+//   if(user == null) {
+//     return <Redirect href={"/(auth)/login"}></Redirect>
+//   }
   const username = user.email;
   
   const flatListRef = useRef<FlatList>(null);
